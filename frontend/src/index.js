@@ -10,6 +10,8 @@ import Navbar from './landing/Navbar';
 import Footer from './landing/Footer';
 import Notfound from './landing/Notfound';
 import Pricing from './landing/home/Pricing';
+import Login from "./landing/signup/Login" 
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
