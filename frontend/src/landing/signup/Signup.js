@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
+const dashboardUrl = process.env.REACT_APP_DASHBOARD_URL;
+
 function Signup() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -7,7 +10,7 @@ function Signup() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const endpoint = isLogin ? 'http://localhost:3002/login' : 'http://localhost:3002/signup';
+        const endpoint = isLogin ? `${backendUrl}/login` : `${backendUrl}/signup`;
         
         try {
             const res = await fetch(endpoint, {
@@ -19,7 +22,7 @@ function Signup() {
             if (res.ok) {
                 if (isLogin) {
                     localStorage.setItem('token', data.token);
-                    window.location.href = `http://localhost:3001?token=${data.token}`; // Redirect to dashboard
+                    window.location.href = `${dashboardUrl}?token=${data.token}`; // Redirect to dashboard
                 } else {
                     alert('Signup successful! Please login.');
                     setIsLogin(true);

@@ -5,6 +5,9 @@ const Menu = () => {
   const [selectedMenu, setSelectedMenu] = useState(0);
   const navigate = useNavigate();
 
+  // 1. Check if the token exists in local storage
+  const isAuthenticated = !!localStorage.getItem("token");
+
   const handleMenuClick = (index) => {
     setSelectedMenu(index);
   };
@@ -19,7 +22,6 @@ const Menu = () => {
 
   return (
     <div className="menu-container">
-      
       <div className="menus">
         <ul>
           <li>
@@ -68,11 +70,24 @@ const Menu = () => {
           </li>
         </ul>
         <hr />
-        {}
-        <div className="profile" onClick={handleLogout} style={{ cursor: "pointer" }}>
-          <div className="avatar">KG</div>
-          <p className="username" style={{ cursor: "pointer" }}>Logout</p>
-        </div>
+        
+        {/* 2. THE FIX: Conditional Rendering based on the token */}
+        {isAuthenticated ? (
+          <div className="profile" onClick={handleLogout} style={{ cursor: "pointer" }}>
+            <div className="avatar">Hi</div>
+            <p className="username" style={{ cursor: "pointer" }}>Logout</p>
+          </div>
+        ) : (
+          <div className="auth-links" style={{ display: "flex", gap: "15px", marginLeft: "20px" }}>
+            <Link to="/login" style={{ textDecoration: "none", color: "#4184f3", fontWeight: "500" }}>
+              Login
+            </Link>
+            <Link to="/signup" style={{ textDecoration: "none", color: "#ff5722", fontWeight: "500" }}>
+              Signup
+            </Link>
+          </div>
+        )}
+
       </div>
     </div>
   );

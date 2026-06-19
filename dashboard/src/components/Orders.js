@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import GeneralContext from "./GeneralContext";
 
+const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:3002";
+
 const Orders = () => {
   const [allOrders, setAllOrders] = useState([]);
   const generalContext = useContext(GeneralContext);
 
   useEffect(() => {
-    axios.get("http://localhost:3002/allOrders", { headers: { Authorization: "Bearer " + localStorage.getItem("token") } })
+    axios.get(`${backendUrl}/allOrders`, { headers: { Authorization: "Bearer " + localStorage.getItem("token") } })
       .then((res) => {
         setAllOrders(res.data);
       })

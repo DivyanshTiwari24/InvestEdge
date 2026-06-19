@@ -3,12 +3,14 @@ import axios from "axios";
 import { VerticalGraph } from "./VerticalGraph";
 import GeneralContext from "./GeneralContext";
 
+const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:3002";
+
 const Holdings = () => {
   const [allHoldings, setAllHoldings] = useState([]);
   const generalContext = useContext(GeneralContext);
 
   useEffect(() => {
-    axios.get("http://localhost:3002/allHoldings", { headers: { Authorization: "Bearer " + localStorage.getItem("token") } })
+    axios.get(`${backendUrl}/allHoldings`, { headers: { Authorization: "Bearer " + localStorage.getItem("token") } })
       .then((res) => {
         setAllHoldings(res.data);
       })

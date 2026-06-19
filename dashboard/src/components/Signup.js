@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+
+const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:3002";
+
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -10,14 +13,16 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:3002/signup", {
+      
+      await axios.post(`${backendUrl}/signup`, {
         email: email,
         password: password,
       });
       alert("Signup successful! Please login.");
       navigate("/login"); 
     } catch (err) {
-      alert("Signup failed! User might already exist.");
+      const errorMessage = err.response?.data?.error || err.response?.data?.message || "Signup failed. Please try again.";
+      alert(errorMessage);
       console.error(err);
     }
   };

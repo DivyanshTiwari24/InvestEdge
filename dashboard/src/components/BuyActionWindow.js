@@ -4,9 +4,11 @@ import axios from "axios";
 import GeneralContext from "./GeneralContext";
 import "./BuyActionWindow.css";
 
-const BuyActionWindow = ({ uid, actionType }) => {
+const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:3002";
+
+const BuyActionWindow = ({ uid, actionType, initialPrice }) => {
   const [stockQuantity, setStockQuantity] = useState(1);
-  const [stockPrice, setStockPrice] = useState(0.0);
+  const [stockPrice, setStockPrice] = useState(initialPrice || 0.0);
   const generalContext = useContext(GeneralContext);
   
   // Custom Drag State
@@ -35,17 +37,20 @@ const BuyActionWindow = ({ uid, actionType }) => {
   };
 
   const handleBuyClick = () => {
-    axios.post("http://localhost:3002/newOrder", {
+    axios.post(`${backendUrl}/newOrder`, {
       name: uid,
       qty: stockQuantity,
       price: stockPrice,
       mode: actionType || "BUY",
     }, { headers: { Authorization: "Bearer " + localStorage.getItem("token") } })
     .then(() => {
-      generalContext.triggerRefresh(); // Tell other components to update
-      generalContext.closeBuyWindow();
+      generalContext.triggerRefresh(); 
+      generalContext.closeBuyWindow(); 
     })
-    .catch((err) => alert(err.response?.data || "Error placing order"));
+    .catch((err) => {
+      alert(err.response?.data || "Transaction failed. Check console for details.");
+      console.error("Order Error:", err);
+    });
   };
 
   const isBuy = actionType === "BUY";

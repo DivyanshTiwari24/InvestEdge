@@ -82,53 +82,47 @@ app.post('/newOrder', authenticateToken, async (req, res) => {
         const reqPrice = Number(req.body.price);
         const isBuy = req.body.mode === "BUY";
 
-        // 1. Create the Order Record
-        let newOrder = new OrdersModel({
-            name: req.body.name,
-            qty: reqQty,
-            price: reqPrice,
-            mode: req.body.mode,
-            user: userId
-        });
-        await newOrder.save();
-
-        // 2. Handle Positions Logic
+        // 1. VALIDATION FIRST: If selling, verify they have enough inventory BEFORE doing anything
         let position = await PositionsModel.findOne({ name: req.body.name, user: userId });
         
+        if (!isBuy) {
+            if (!position || position.qty < reqQty) {
+                return res.status(400).send("Insufficient holdings to sell.");
+            }
+        }
+
+        // 2. Handle Positions Logic
         if (position) {
             if (isBuy) {
-                // Calculate new weighted average cost
                 let totalCost = (position.qty * position.avg) + (reqQty * reqPrice);
                 position.qty += reqQty;
                 position.avg = totalCost / position.qty;
             } else {
-                // Prevent negative selling
-                if (position.qty < reqQty) {
-                    return res.status(400).send("Insufficient quantity to sell");
-                }
                 position.qty -= reqQty;
             }
-            await position.save();
-        } else {
-            if (isBuy) {
-                let newPosition = new PositionsModel({
-                    product: "CNC",
-                    name: req.body.name,
-                    qty: reqQty,
-                    avg: reqPrice,
-                    price: reqPrice,
-                    net: "+0.0%",
-                    day: "+0.0%",
-                    isLoss: false,
-                    user: userId
-                });
-                await newPosition.save();
+            
+            // Clean up empty positions
+            if (position.qty <= 0) {
+                await PositionsModel.deleteOne({ _id: position._id });
             } else {
-                return res.status(400).send("Cannot sell a stock you do not own.");
+                await position.save();
             }
+        } else if (isBuy) {
+            let newPosition = new PositionsModel({
+                product: "CNC",
+                name: req.body.name,
+                qty: reqQty,
+                avg: reqPrice,
+                price: reqPrice,
+                net: "+0.0%",
+                day: "+0.0%",
+                isLoss: false,
+                user: userId
+            });
+            await newPosition.save();
         }
 
-        // 3. Sync with Holdings (For MVP, we treat CNC positions as holdings)
+        // 3. Sync with Holdings
         let holding = await Holdingmodel.findOne({ name: req.body.name, user: userId });
         if (holding) {
             if (isBuy) {
@@ -139,7 +133,7 @@ app.post('/newOrder', authenticateToken, async (req, res) => {
             } else {
                 holding.qty -= reqQty;
                 if (holding.qty <= 0) {
-                    await Holdingmodel.deleteOne({ _id: holding._id }); // Remove if sold out
+                    await Holdingmodel.deleteOne({ _id: holding._id });
                 } else {
                     await holding.save();
                 }
@@ -156,6 +150,16 @@ app.post('/newOrder', authenticateToken, async (req, res) => {
             });
             await newHolding.save();
         }
+
+        // 4. Create the Order Record LAST (Only saves if inventory checks passed!)
+        let newOrder = new OrdersModel({
+            name: req.body.name,
+            qty: reqQty,
+            price: reqPrice,
+            mode: req.body.mode,
+            user: userId
+        });
+        await newOrder.save();
 
         res.status(200).send("Order saved successfully!");
     } catch (err) {

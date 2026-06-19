@@ -103,17 +103,15 @@ const WatchListItem = ({ stock }) => {
           <span className="price">{stock.price}</span>
         </div>
       </div>
-      {showWatchlistActions && <WatchListActions uid={stock.name} />}
+      {/* FIX: Pass the price down to the actions! */}
+      {showWatchlistActions && <WatchListActions uid={stock.name} price={stock.price} />}
     </li>
   );
 };
 
-const WatchListActions = ({ uid }) => {
+// FIX: Accept the price as a prop
+const WatchListActions = ({ uid, price }) => {
   const generalContext = useContext(GeneralContext);
-
-  const handleBuyClick = () => {
-    generalContext.openBuyWindow(uid);
-  };
 
   return (
     <span className="actions">
@@ -123,9 +121,9 @@ const WatchListActions = ({ uid }) => {
           placement="top"
           arrow
           TransitionComponent={Grow}
-          onClick={handleBuyClick}
         >
-          <button className="buy">Buy</button>
+          {/* FIX: Send the price to the Context! */}
+          <button className="buy" onClick={() => generalContext.openBuyWindow(uid, price)}>Buy</button>
         </Tooltip>
         <Tooltip
           title="Sell"
@@ -133,7 +131,8 @@ const WatchListActions = ({ uid }) => {
           arrow
           TransitionComponent={Grow}
         >
-          <button className="sell" onClick={() => generalContext.openSellWindow(uid)}>Sell</button>
+          {/* FIX: Send the price to the Context! */}
+          <button className="sell" onClick={() => generalContext.openSellWindow(uid, price)}>Sell</button>
         </Tooltip>
         <Tooltip
           title="Analytics"

@@ -2,13 +2,15 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import GeneralContext from "./GeneralContext";
 
+const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:3002";
+
 const Positions = () => {
   const [allPositions, setAllPositions] = useState([]);
   const generalContext = useContext(GeneralContext);
 
   useEffect(() => {
     axios
-      .get("http://localhost:3002/allPositions", {
+      .get(`${backendUrl}/allPositions`, {
         headers: { Authorization: "Bearer " + localStorage.getItem("token") }
       })
       .then((res) => {

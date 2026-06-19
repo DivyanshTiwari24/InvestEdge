@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:3002";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -10,19 +12,19 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:3002/login", {
-        // MUST be "username" for your backend Passport.js to accept it
+      const res = await axios.post(`${backendUrl}/login`, {
+
         username: email, 
         password: password,
       });
       
-      // Save the token to Local Storage so the Dashboard can use it for trades
       localStorage.setItem("token", res.data.token);
       
       // Instantly redirect to the Dashboard
       navigate("/"); 
     } catch (err) {
-      alert("Login failed! Please check your credentials.");
+      const errorMessage = err.response?.data?.error || err.response?.data?.message || "Login failed! Please check your credentials.";
+      alert(errorMessage);
       console.error(err);
     }
   };
