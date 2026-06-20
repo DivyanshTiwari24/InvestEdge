@@ -63,7 +63,7 @@ const styles = {
   card: { padding: "40px", background: "white", borderRadius: "8px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", width: "300px", textAlign: "center" },
   title: { marginBottom: "20px", color: "#444", fontWeight: "400" },
   form: { display: "flex", flexDirection: "column" },
-  input: { padding: "10px", marginBottom: "15px", border: "1px solid #ddd", borderRadius: "4px", fontSize: "1rem" },
+  input: { padding: "10px", marginBottom: "15px", border: "1px solid #ddd", borderRadius: "8px", fontSize: "1rem",marginTop:"0.7rem" },
   button: { padding: "10px", background: "#ff5722", color: "white", border: "none", borderRadius: "4px", fontSize: "1rem", cursor: "pointer" },
   text: { marginTop: "15px", fontSize: "0.8rem", color: "#666" },
   link: { color: "#ff5722", textDecoration: "none" }

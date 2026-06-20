@@ -1,5 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
+
+// Pulls the dashboard link from your Vercel Environment Variables
+const dashboardUrl = "https://invest-edge-1f4c.vercel.app/signup" || "http://localhost:3000";
+
 function Navbar() {
   return (
     <nav
@@ -29,22 +33,23 @@ function Navbar() {
           <form className="d-flex" role="search">
             <ul className="navbar-nav mb-lg-0">
               <li className="nav-item">
-                <Link className="nav-link active" aria-current="page" to="/signup">
-                  Signup
-                </Link>
-              </li>
+  <a className="nav-link active" aria-current="page" href={`${dashboardUrl}`}>
+    Signup
+  </a>
+</li>
               <li className="nav-item">
-                <Link className="nav-link active" to="products">
+                <a className="nav-link active" href="https://invest-edge-1f4c.vercel.app/ ">
                   Product
-                </Link>
+                </a>
               </li>
+              
               <li className="nav-item">
-                <Link className="nav-link active" to="pricing">
+                <Link className="nav-link active" to="/pricing">
                   Pricing
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link active" to="support">
+                <Link className="nav-link active" to="/support">
                   Support
                 </Link>
               </li>
