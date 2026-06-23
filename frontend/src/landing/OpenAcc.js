@@ -1,7 +1,5 @@
 import React from 'react'
-
-const dashboardUrl = process.env.REACT_APP_DASHBOARD_URL || "https://invest-edge-1f4c.vercel.app/signup";
-
+import { Link } from 'react-router-dom';
 function OpenAcc() {
     return ( 
         <div className="container p-5 mb-5">
@@ -11,14 +9,14 @@ function OpenAcc() {
           Modern platforms and apps, ₹0 investments, and flat ₹20 intraday and
           F&O trades.
         </p>
-        <a href={dashboardUrl}>
+        <Link to="https://invest-edge-1f4c.vercel.app/signup">
             <button
               className="p-2 btn btn-primary fs-5 mb-5"
               style={{ width: "20%", margin: "0 auto" }}
             >
               Sign up Now
             </button>
-          </a>
+          </Link>
       </div>
     </div>
   );

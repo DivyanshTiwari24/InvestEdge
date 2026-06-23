@@ -1,7 +1,4 @@
 import React from 'react'
-
-const dashboardUrl = process.env.REACT_APP_DASHBOARD_URL || "http://localhost:3003";
-
 function Universe() {
     return (  
          <div className="container mt-5">
@@ -36,14 +33,12 @@ function Universe() {
           <img src="/img/smallcaseLogo.png" />
           <p className="text-small text-muted">Thematic investment platform</p>
         </div>
-        <a href={dashboardUrl} style={{ width: "20%", margin: "0 auto" }}>
-          <button
-            className="p-2 btn btn-primary fs-5 mb-5"
-            style={{ width: "100%" }}
-          >
-            Signup Now
-          </button>
-        </a>
+        <button
+          className="p-2 btn btn-primary fs-5 mb-5"
+          style={{ width: "20%", margin: "0 auto" }}
+        >
+          Signup Now
+        </button>
       </div>
     </div>
   );
