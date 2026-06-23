@@ -3,10 +3,10 @@ const app = express();
 require("dotenv").config();
 
 const mongoose = require("mongoose");
-const { Holdingmodel } = require("../backend/models/Holdingmodel");
-const { PositionsModel } = require("../backend/models/PositionsModel");
-const { OrdersModel } = require("../backend/models/OrdersModel");
-const UserModel = require("../backend/models/UserModel");
+const { Holdingmodel } = require("./models/Holdingmodel");
+const { PositionsModel } = require("./models/PositionsModel");
+const { OrdersModel } = require("./models/OrdersModel");
+const UserModel = require("./models/UserModel");
 
 const bodyparser = require("body-parser");
 app.use(bodyparser.json());
@@ -30,6 +30,15 @@ mongoose.connect(url)
 
 app.listen(PORT, () => {
     console.log("App Started on port " + PORT);
+});
+
+app.get("/health", (req, res) => {
+    const dbState = mongoose.connection.readyState;
+    const states = ["disconnected", "connected", "connecting", "disconnecting"];
+    res.json({
+        status: "ok",
+        database: states[dbState] || "unknown"
+    });
 });
 
 // Auth Routes

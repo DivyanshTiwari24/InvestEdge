@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 
-const dashboardUrl = "https://invest-edge-1f4c.vercel.app/signup" || "http://localhost:3000";
+const dashboardUrl = process.env.REACT_APP_DASHBOARD_URL || "https://invest-edge-1f4c.vercel.app/signup";
 
 function Navbar() {
   return (
@@ -38,9 +38,9 @@ function Navbar() {
   </a>
 </li>
               <li className="nav-item">
-                <a className="nav-link active" href="https://invest-edge-1f4c.vercel.app/ ">
+                <Link className="nav-link active" to="/products">
                   Product
-                </a>
+                </Link>
               </li>
               
               <li className="nav-item">
