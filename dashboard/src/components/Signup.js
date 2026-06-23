@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:3002";
+const backendUrl = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  ? "http://localhost:3002"
+  : "https://invest-edge-iota.vercel.app";
 
 const Signup = () => {
   const [email, setEmail] = useState("");

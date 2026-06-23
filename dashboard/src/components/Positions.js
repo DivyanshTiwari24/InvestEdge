@@ -2,7 +2,9 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import GeneralContext from "./GeneralContext";
 
-const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:3002";
+const backendUrl = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  ? "http://localhost:3002"
+  : "https://invest-edge-iota.vercel.app";
 
 const Positions = () => {
   const [allPositions, setAllPositions] = useState([]);

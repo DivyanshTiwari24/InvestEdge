@@ -21,7 +21,7 @@ passport.use(UserModel.createStrategy());
 
 const PORT = process.env.PORT || 3002;
 const url = process.env.MONGO_URL || "mongodb://localhost:27017/zerodha";
-const JWT_SECRET = process.env.JWT_SECRET ;
+const JWT_SECRET = process.env.JWT_SECRET || "supersecretjwtkey";
 
 // Connect to MongoDB globally for serverless compatibility
 mongoose.connect(url)
