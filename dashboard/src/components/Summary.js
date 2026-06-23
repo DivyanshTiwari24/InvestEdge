@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const backendUrl = "https://invest-edge-iota.vercel.app" ;
+const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:3002";
 
 const Summary = () => {
   const [profile, setProfile] = useState({ email: "", margin: 100000 });

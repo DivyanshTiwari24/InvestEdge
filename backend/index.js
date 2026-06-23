@@ -21,12 +21,15 @@ passport.use(UserModel.createStrategy());
 
 const PORT = process.env.PORT || 3002;
 const url = process.env.MONGO_URL || "mongodb://localhost:27017/zerodha";
-const JWT_SECRET = process.env.JWT_SECRET || "supersecretjwtkey";
+const JWT_SECRET = process.env.JWT_SECRET ;
+
+// Connect to MongoDB globally for serverless compatibility
+mongoose.connect(url)
+    .then(() => console.log("DB connected successfully"))
+    .catch((err) => console.error("DB connection error:", err));
 
 app.listen(PORT, () => {
     console.log("App Started on port " + PORT);
-    mongoose.connect(url);
-    console.log("DB started");
 });
 
 // Auth Routes
@@ -220,3 +223,5 @@ app.post('/newOrder', authenticateToken, async (req, res) => {
         res.status(500).send("Error saving order");
     }
 });
+
+module.exports = app;

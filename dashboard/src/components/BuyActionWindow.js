@@ -4,7 +4,7 @@ import axios from "axios";
 import GeneralContext from "./GeneralContext";
 import "./BuyActionWindow.css";
 
-const backendUrl = "https://invest-edge-iota.vercel.app";
+const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:3002";
 
 const BuyActionWindow = ({ uid, actionType, initialPrice }) => {
   const [stockQuantity, setStockQuantity] = useState(1);

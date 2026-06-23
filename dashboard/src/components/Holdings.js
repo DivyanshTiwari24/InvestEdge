@@ -3,7 +3,7 @@ import axios from "axios";
 import { VerticalGraph } from "./VerticalGraph";
 import GeneralContext from "./GeneralContext";
 
-const backendUrl = "https://invest-edge-iota.vercel.app";
+const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:3002";
 
 const Holdings = () => {
   const [allHoldings, setAllHoldings] = useState([]);
