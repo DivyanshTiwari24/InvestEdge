@@ -11,7 +11,9 @@ const UserModel = require("./models/UserModel");
 const bodyparser = require("body-parser");
 app.use(bodyparser.json());
 const cors = require("cors");
-app.use(cors());
+app.use(cors({
+    origin:"*"
+}));
 
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
