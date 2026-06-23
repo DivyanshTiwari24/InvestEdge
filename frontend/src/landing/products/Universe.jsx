@@ -1,6 +1,6 @@
 import React from 'react'
 
-const dashboardUrl = process.env.REACT_APP_DASHBOARD_URL || "https://invest-edge-1f4c.vercel.app/signup";
+const dashboardUrl = process.env.REACT_APP_DASHBOARD_URL || "http://localhost:3003";
 
 function Universe() {
     return (  
