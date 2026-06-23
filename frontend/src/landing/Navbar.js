@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-// Pulls the dashboard link from your Vercel Environment Variables
+
 const dashboardUrl = "https://invest-edge-1f4c.vercel.app/signup" || "http://localhost:3000";
 
 function Navbar() {

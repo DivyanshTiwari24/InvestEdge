@@ -1,8 +1,8 @@
 .container {
-    --radius: 4px;
+    --radius: 8px;
     width: 40%;
-    height: 63%;
-    background: rgb(245, 245, 245);
+    min-height: 320px;
+    background: var(--bg-primary);
     position: absolute;
     bottom: 0;
     left: 35%;
@@ -10,7 +10,9 @@
     box-sizing: border-box;
     z-index: 100;
     border-radius: var(--radius);
-    border: 1px solid rgb(238, 238, 238);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 12px 32px var(--shadow-color);
+    overflow: hidden;
   }
   
   .dragging {
@@ -22,19 +24,17 @@
     background: #4184f3;
     box-sizing: border-box;
     padding: 16px;
-    border-top-left-radius: var(--radius);
-    border-top-right-radius: var(--radius);
   }
   
   .header h3 {
     color: #fff;
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 500;
-    margin-bottom: 6px;
+    margin: 0;
   }
   
   .header h3 span {
-    font-size: 0.6rem;
+    font-size: 0.65rem;
   }
   
   .market-options {
@@ -54,7 +54,7 @@
   }
   
   .market-options input[type="radio"] {
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     cursor: pointer;
     padding: 2px;
     margin-right: 6px;
@@ -63,8 +63,8 @@
   .tab {
     width: 100%;
     box-sizing: border-box;
-    background-color: #f9f9f9;
-    border-bottom: 2px solid rgba(180, 180, 180, 0.6);
+    background-color: var(--bg-hover);
+    border-bottom: 2px solid var(--border-color);
   }
   
   .tab button {
@@ -78,14 +78,14 @@
   }
   
   .regular-order {
-    padding: 16px 26px;
-    background-color: #fff;
-    padding-bottom: 30px;
+    padding: 24px 26px;
+    background-color: var(--bg-secondary);
   }
   
   .regular-order label {
     font-size: 0.8rem;
     cursor: pointer;
+    color: var(--text-secondary);
   }
   
   .order-validity {
@@ -96,42 +96,49 @@
   }
   
   .order-validity label span {
-    color: rgb(190, 190, 190);
+    color: var(--text-secondary);
   }
   
   .inputs {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 15px;
     margin-top: 16px;
     margin-bottom: 16px;
   }
   
   .inputs fieldset {
-    max-width: 120px;
+    max-width: 140px;
+    flex: 1;
     box-sizing: border-box;
-    border: 0.7px solid #ddd;
-    margin-right: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin: 0;
+    background-color: var(--search-bg);
   }
   
   .inputs fieldset legend {
     margin-left: 10px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     padding: 0 4px;
+    color: var(--text-secondary);
   }
   
   .inputs fieldset:last-of-type legend {
-    color: #ddd;
+    color: var(--text-secondary);
   }
   
   .inputs fieldset input {
     border: none;
-    margin-right: 8px;
-    max-width: 130px;
-    min-height: 35px;
+    width: 100%;
+    min-height: 38px;
     padding: 0 12px;
     box-sizing: border-box;
-    font-size: 1.1rem;
+    font-size: 1rem;
+    background-color: transparent;
+    color: var(--text-primary);
+    outline: none;
   }
   
   .options {
@@ -154,27 +161,32 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: relative;
-    top: 10%;
-    padding: 0 20px;
+    margin-top: 20px;
+    padding: 15px 26px;
+    background-color: var(--bg-hover);
+    border-top: 1px solid var(--border-color);
   }
   
   .buttons span {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
+    color: var(--text-primary);
   }
   
   .btn {
     text-decoration: none;
     padding: 10px 20px;
-    border-radius: 2px;
+    border-radius: 4px;
     color: #fff;
     margin-right: 2px;
     margin-left: 2px;
+    font-size: 0.9rem;
+    font-weight: 500;
   }
   
   .btn-grey {
-    background: #d4d4d4;
-    color: #666666;
+    background: var(--btn-cancel-bg);
+    color: var(--btn-cancel-text);
+    border: 1px solid var(--border-color);
   }
   
   .btn-blue {

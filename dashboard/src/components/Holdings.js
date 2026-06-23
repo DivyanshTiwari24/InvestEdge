@@ -30,6 +30,16 @@ const Holdings = () => {
     ],
   };
 
+  const totalInvestment = allHoldings.reduce((sum, stock) => sum + (stock.avg * stock.qty), 0);
+  const currentValue = allHoldings.reduce((sum, stock) => sum + (stock.price * stock.qty), 0);
+  const totalPL = currentValue - totalInvestment;
+  const plPercent = totalInvestment > 0 ? (totalPL / totalInvestment) * 100 : 0;
+  const isProfit = totalPL >= 0;
+
+  const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
+  const investmentParts = formatCurrency(totalInvestment).split('.');
+  const currentParts = formatCurrency(currentValue).split('.');
+
   return (
     <>
       <h3 className="title">Holdings ({allHoldings.length})</h3>
@@ -51,8 +61,8 @@ const Holdings = () => {
           <tbody>
             {allHoldings.map((stock, index) => {
               const curValue = stock.price * stock.qty;
-              const isProfit = curValue - stock.avg * stock.qty >= 0.0;
-              const profClass = isProfit ? "profit" : "loss";
+              const isProfitStock = curValue - stock.avg * stock.qty >= 0.0;
+              const profClass = isProfitStock ? "profit" : "loss";
               const dayClass = stock.isLoss ? "loss" : "profit";
 
               return (
@@ -77,18 +87,20 @@ const Holdings = () => {
       <div className="row">
         <div className="col">
           <h5>
-            29,875.<span>55</span>{" "}
+            {investmentParts[0]}.<span>{investmentParts[1]}</span>{" "}
           </h5>
           <p>Total investment</p>
         </div>
         <div className="col">
           <h5>
-            31,428.<span>95</span>{" "}
+            {currentParts[0]}.<span>{currentParts[1]}</span>{" "}
           </h5>
           <p>Current value</p>
         </div>
         <div className="col">
-          <h5>1,553.40 (+5.20%)</h5>
+          <h5 className={isProfit ? "profit" : "loss"}>
+            {formatCurrency(totalPL)} ({isProfit ? "+" : ""}{plPercent.toFixed(2)}%)
+          </h5>
           <p>P&L</p>
         </div>
       </div>

@@ -35,6 +35,35 @@ app.post("/signup", async (req, res) => {
         const { email, password } = req.body;
         const newUser = new UserModel({ username: email, email });
         await UserModel.register(newUser, password);
+
+        const userId = newUser._id;
+
+        // Seed default holdings for a richer initial experience
+        const defaultHoldings = [
+            { name: "BHARTIARTL", qty: 2, avg: 538.05, price: 541.15, net: "+0.58%", day: "+2.99%", user: userId },
+            { name: "HDFCBANK", qty: 2, avg: 1383.4, price: 1522.35, net: "+10.04%", day: "+0.11%", user: userId },
+            { name: "HINDUNILVR", qty: 1, avg: 2335.85, price: 2417.4, net: "+3.49%", day: "+0.21%", user: userId },
+            { name: "INFY", qty: 1, avg: 1350.5, price: 1555.45, net: "+15.18%", day: "-1.60%", user: userId },
+            { name: "ITC", qty: 5, avg: 202.0, price: 207.9, net: "+2.92%", day: "+0.80%", user: userId },
+            { name: "KPITTECH", qty: 5, avg: 250.3, price: 266.45, net: "+6.45%", day: "+3.54%", user: userId },
+            { name: "M&M", qty: 2, avg: 809.9, price: 779.8, net: "-3.72%", day: "-0.01%", isLoss: true, user: userId },
+            { name: "RELIANCE", qty: 1, avg: 2193.7, price: 2112.4, net: "-3.71%", day: "+1.44%", user: userId },
+            { name: "SBIN", qty: 4, avg: 324.35, price: 430.2, net: "+32.63%", day: "-0.34%", isLoss: true, user: userId },
+            { name: "SGBMAY29", qty: 2, avg: 4727.0, price: 4719.0, net: "-0.17%", day: "+0.15%", user: userId },
+            { name: "TATAPOWER", qty: 5, avg: 104.2, price: 124.15, net: "+19.15%", day: "-0.24%", isLoss: true, user: userId },
+            { name: "TCS", qty: 1, avg: 3041.7, price: 3194.8, net: "+5.03%", day: "-0.25%", isLoss: true, user: userId },
+            { name: "WIPRO", qty: 4, avg: 489.3, price: 577.75, net: "+18.08%", day: "+0.32%", user: userId }
+        ];
+
+        // Seed default positions
+        const defaultPositions = [
+            { product: "CNC", name: "EVEREADY", qty: 2, avg: 316.27, price: 312.35, net: "+0.58%", day: "-1.24%", isLoss: true, user: userId },
+            { product: "CNC", name: "JUBLFOOD", qty: 1, avg: 3124.75, price: 3082.65, net: "+10.04%", day: "-1.35%", isLoss: true, user: userId }
+        ];
+
+        await Holdingmodel.insertMany(defaultHoldings);
+        await PositionsModel.insertMany(defaultPositions);
+
         res.status(200).json({ message: "Signup successful" });
     } catch (err) {
         res.status(400).json({ error: err.message });
@@ -60,6 +89,17 @@ const authenticateToken = (req, res, next) => {
 };
 
 // Protected Routes
+app.get('/profile', authenticateToken, async (req, res) => {
+    try {
+        const user = await UserModel.findById(req.user.id);
+        if (!user) return res.status(404).send("User not found");
+        res.json({ email: user.email, margin: user.margin || 100000 });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error fetching profile");
+    }
+});
+
 app.get('/allHoldings', authenticateToken, async (req, res) => {
     let allHoldings = await Holdingmodel.find({ user: req.user.id });
     res.json(allHoldings);
@@ -82,14 +122,29 @@ app.post('/newOrder', authenticateToken, async (req, res) => {
         const reqPrice = Number(req.body.price);
         const isBuy = req.body.mode === "BUY";
 
-        // 1. VALIDATION FIRST: If selling, verify they have enough inventory BEFORE doing anything
+        const user = await UserModel.findById(userId);
+        if (!user) return res.status(404).send("User not found");
+
+        const orderValue = reqQty * reqPrice;
+
         let position = await PositionsModel.findOne({ name: req.body.name, user: userId });
-        
-        if (!isBuy) {
-            if (!position || position.qty < reqQty) {
-                return res.status(400).send("Insufficient holdings to sell.");
+        let holding = await Holdingmodel.findOne({ name: req.body.name, user: userId });
+
+        if (isBuy) {
+            if (user.margin < orderValue) {
+                return res.status(400).send(`Insufficient margin. Required: ₹${orderValue.toFixed(2)}, Available: ₹${user.margin.toFixed(2)}`);
             }
+            user.margin -= orderValue;
+        } else {
+            // Sell logic correction: available quantity is the maximum of holding or position
+            const availableQty = Math.max(holding ? holding.qty : 0, position ? position.qty : 0);
+            if (availableQty < reqQty) {
+                return res.status(400).send("Insufficient quantity to sell.");
+            }
+            user.margin += orderValue;
         }
+
+        await user.save();
 
         // 2. Handle Positions Logic
         if (position) {
@@ -101,7 +156,6 @@ app.post('/newOrder', authenticateToken, async (req, res) => {
                 position.qty -= reqQty;
             }
             
-            // Clean up empty positions
             if (position.qty <= 0) {
                 await PositionsModel.deleteOne({ _id: position._id });
             } else {
@@ -123,7 +177,6 @@ app.post('/newOrder', authenticateToken, async (req, res) => {
         }
 
         // 3. Sync with Holdings
-        let holding = await Holdingmodel.findOne({ name: req.body.name, user: userId });
         if (holding) {
             if (isBuy) {
                 let totalCost = (holding.qty * holding.avg) + (reqQty * reqPrice);
@@ -151,7 +204,7 @@ app.post('/newOrder', authenticateToken, async (req, res) => {
             await newHolding.save();
         }
 
-        // 4. Create the Order Record LAST (Only saves if inventory checks passed!)
+        // 4. Create the Order Record LAST
         let newOrder = new OrdersModel({
             name: req.body.name,
             qty: reqQty,
